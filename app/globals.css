@@ -43,7 +43,7 @@ body::before {
 
 /* ===== NAV (Liquid Glass) ===== */
 .nav {
-  position: fixed;
+  position: fixed !important;
   top: 1rem;
   left: 1rem;
   right: 1rem;
