@@ -3,27 +3,34 @@
 import { useState } from 'react'
 
 export default function Contact() {
-  const [form, setForm] = useState({ name: '', phone: '', email: '', notes: '' })
+  const [name, setName] = useState('')
+  const [contact, setContact] = useState('')
+  const [description, setDescription] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'ok' | 'err'>('idle')
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setForm(f => ({ ...f, [e.target.name]: e.target.value }))
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!form.name || !form.phone) return
+    if (!name || !contact) return
     setStatus('loading')
+
+    const isEmail = contact.includes('@')
 
     const res = await fetch('/api/quotes', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...form }),
+      body: JSON.stringify({
+        name,
+        phone: isEmail ? null : contact,
+        email: isEmail ? contact : null,
+        notes: description,
+      }),
     })
 
     if (res.ok) {
       setStatus('ok')
-      setForm({ name: '', phone: '', email: '', notes: '' })
+      setName('')
+      setContact('')
+      setDescription('')
     } else {
       setStatus('err')
     }
@@ -31,11 +38,11 @@ export default function Contact() {
   }
 
   return (
-    <section id="контакти">
+    <section id="contact">
       <div className="section-head">
-        <span className="section-num">04</span>
+        <div className="section-num">— 04 / Контакт</div>
         <h2 className="section-title">
-          Свържете се<br /><em>с нас</em>
+          Свържи се<br /><em>с ателието</em>.
         </h2>
       </div>
 
@@ -43,98 +50,80 @@ export default function Contact() {
         <div className="contact-info">
           <div className="contact-block">
             <h3>Телефон</h3>
-            <a href="tel:+359XXXXXXXXX" className="contact-detail">+359 XX XXX XXXX</a>
-            <p className="contact-meta">Работно време: Пон–Пет, 9:00–18:00</p>
+            <a href="tel:+359000000000" className="contact-detail">+359 __ ___ ____</a>
+            <div className="contact-meta">Понеделник – Петък, 8:00 – 17:00 / Събота, 9:00 – 13:00</div>
           </div>
+
           <div className="contact-block">
             <h3>Имейл</h3>
-            <a href="mailto:info@onglass.bg" className="contact-detail">info@onglass.bg</a>
-            <p className="contact-meta">Отговаряме до 24 часа</p>
+            <a href="mailto:office@onglass.bg" className="contact-detail">office@onglass.bg</a>
+            <div className="contact-meta">Пращайте размери, скици и снимки за бърза оферта.</div>
           </div>
+
           <div className="contact-block">
             <h3>Адрес</h3>
-            <span className="contact-detail" style={{ cursor: 'default' }}>Пловдив, България</span>
-            <p className="contact-meta">Идваме и на място за измерване</p>
+            <div className="contact-detail">ул. Примерна 00, Пловдив</div>
+            <div className="contact-meta">Безплатен паркинг пред ателието</div>
           </div>
         </div>
 
-        <form className="contact-form" onSubmit={handleSubmit}>
-          <div className="form-row">
-            <div className="form-field">
-              <label htmlFor="name">Вашето име *</label>
+        <div>
+          <form onSubmit={handleSubmit}>
+            <div className="calc-field">
+              <label className="calc-label">Име</label>
               <input
-                id="name"
-                name="name"
                 type="text"
-                placeholder="Иван Петров"
-                value={form.name}
-                onChange={handleChange}
+                value={name}
+                onChange={e => setName(e.target.value)}
                 required
               />
             </div>
-            <div className="form-field">
-              <label htmlFor="phone">Телефон *</label>
+            <div className="calc-field">
+              <label className="calc-label">Телефон или имейл</label>
               <input
-                id="phone"
-                name="phone"
-                type="tel"
-                placeholder="+359 88 888 8888"
-                value={form.phone}
-                onChange={handleChange}
+                type="text"
+                value={contact}
+                onChange={e => setContact(e.target.value)}
                 required
               />
             </div>
-          </div>
+            <div className="calc-field">
+              <label className="calc-label">Описание на проекта</label>
+              <input
+                type="text"
+                value={description}
+                onChange={e => setDescription(e.target.value)}
+                placeholder="например: душ кабина 90×200, 8 мм"
+              />
+            </div>
 
-          <div className="form-field">
-            <label htmlFor="email">Имейл</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="ivan@example.com"
-              value={form.email}
-              onChange={handleChange}
-            />
-          </div>
+            <button
+              type="submit"
+              className="btn-primary"
+              disabled={status === 'loading' || status === 'ok'}
+              style={{ width: '100%', justifyContent: 'center', marginTop: '1rem' }}
+            >
+              {status === 'loading' && 'Изпращане...'}
+              {status === 'ok' && '✓ Благодарим! Ще се свържем с вас.'}
+              {status === 'err' && 'Грешка — опитайте пак'}
+              {status === 'idle' && (
+                <>
+                  Изпрати запитване
+                  <svg className="arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M3 8H13M13 8L8 3M13 8L8 13" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+                  </svg>
+                </>
+              )}
+            </button>
 
-          <div className="form-field">
-            <label htmlFor="notes">Опишете проекта си</label>
-            <textarea
-              id="notes"
-              name="notes"
-              rows={4}
-              placeholder="Каква услуга търсите, размери, материал..."
-              value={form.notes}
-              onChange={handleChange}
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="btn-primary"
-            disabled={status === 'loading' || status === 'ok'}
-            style={{ alignSelf: 'flex-start' }}
-          >
-            {status === 'loading' && 'Изпращане...'}
-            {status === 'ok' && '✓ Изпратено!'}
-            {status === 'err' && 'Грешка — опитайте пак'}
-            {status === 'idle' && (
-              <>
-                Изпратете запитване
-                <svg className="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </>
+            {status === 'ok' && (
+              <div className="contact-status ok">Ще се свържем с вас в рамките на работния ден.</div>
             )}
-          </button>
-
-          {status === 'ok' && (
-            <p style={{ fontSize: '0.875rem', color: 'var(--accent)', marginTop: '0.5rem' }}>
-              Ще се свържем с вас до 24 часа.
-            </p>
-          )}
-        </form>
+            {status === 'err' && (
+              <div className="contact-status err">Възникна грешка. Моля опитайте по-късно.</div>
+            )}
+          </form>
+        </div>
       </div>
     </section>
   )

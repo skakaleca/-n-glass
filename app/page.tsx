@@ -10,27 +10,29 @@ export default function Home() {
   return (
     <>
       <Nav />
-      <main>
-        <Hero />
-        <Services />
+      <Hero />
+      <Services />
 
-        <section id="калкулатор">
+      <section id="calculator" className="calc-section">
+        <div className="calc-bg-1" />
+        <div className="calc-bg-2" />
+        <div className="calc-inner">
           <div className="section-head">
-            <span className="section-num">02</span>
+            <div className="section-num">— 02 / Изчисли</div>
             <h2 className="section-title">
-              Изчислете<br /><em>цената</em>
+              Бърза <em>ориентировъчна</em><br />оценка на цената.
             </h2>
           </div>
           <Calculator />
           <div className="calc-disclaimer">
-            Това е ориентировъчна цена само за материала. Крайната оферта може да се различава
-            в зависимост от достъп, монтаж и специфики на проекта. Свържете се с нас за точна сметка.
+            Това е <strong>ориентировъчна</strong> оценка. Финална цена се определя след преглед
+            на проекта и измерване на място. За точна оферта се свържете с нас.
           </div>
-        </section>
+        </div>
+      </section>
 
-        <About />
-        <Contact />
-      </main>
+      <About />
+      <Contact />
       <Footer />
     </>
   )

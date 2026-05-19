@@ -1,28 +1,18 @@
 export default function About() {
   return (
-    <section className="about" id="за-нас">
+    <section className="about" id="about">
       <div className="section-head">
-        <span className="section-num">03</span>
+        <div className="section-num">— 03 / За нас</div>
         <h2 className="section-title">
-          Занаят, предаван<br /><em>с поколения</em>
+          Занаят, направен с <em>прецизност</em>.
         </h2>
       </div>
 
       <div className="about-grid">
         <div className="about-text">
-          <p>
-            Основано от двама братя с дългогодишен опит в стъкларството,
-            O&N Glass е семеен бизнес, изграден върху едно просто убеждение:
-            всяко парче стъкло заслужава прецизна обработка.
-          </p>
-          <p>
-            Работим с частни клиенти, интериорни дизайнери, архитекти и
-            строителни фирми. Всеки проект е уникален — измерваме на място,
-            изработваме по размер и монтираме сами.
-          </p>
-          <p>
-            Не правим дограма. Правим стъкло — и го правим добре.
-          </p>
+          <p>Стъкларско ателие с дългогодишен опит в обработката на стъкло — от индивидуални поръчки за дома до серийни доставки за мебелисти и строителни обекти.</p>
+          <p>Работим само с лист стъкло — рязане, шлайфане, фасетиране, закаляване, лепене и монтаж. Не се занимаваме с дограма, защото сме съсредоточили цялото си внимание върху това, в което сме най-добри.</p>
+          <p>Всеки проект минава през ръцете на майстор. Всеки ръб е проверен. Всеки размер е точен.</p>
         </div>
 
         <div className="stats">
@@ -31,12 +21,12 @@ export default function About() {
             <div className="stat-label">Години опит</div>
           </div>
           <div className="stat">
-            <div className="stat-num">1<em>к</em></div>
-            <div className="stat-label">Завършени проекти</div>
+            <div className="stat-num">2000<em>+</em></div>
+            <div className="stat-label">Завършени проекта</div>
           </div>
           <div className="stat">
             <div className="stat-num">48<em>ч</em></div>
-            <div className="stat-label">Срок за доставка</div>
+            <div className="stat-label">Среден срок B2B</div>
           </div>
         </div>
       </div>
