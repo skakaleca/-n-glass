@@ -554,7 +554,7 @@ section {
 .calc-wrap {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0;
+  gap: 3rem;
   background: white;
   border: 1px solid var(--line);
   border-radius: 4px;
