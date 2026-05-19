@@ -8,37 +8,38 @@ export default function Footer() {
               O<em>&</em>N
             </span>
             <span className="logo-divider" />
-            Glass
+            <span>Glass</span>
           </a>
           <p className="footer-tagline">
-            Стъкло, което издържа —<br />естетика, която остава.
+            Стъкло, изработено по точна мярка — за дома, офиса и обекта.
           </p>
         </div>
 
         <div className="footer-col">
           <h4>Услуги</h4>
           <ul>
-            <li><a href="#услуги">Душ кабини</a></li>
-            <li><a href="#услуги">Огледала</a></li>
-            <li><a href="#услуги">Паравани</a></li>
-            <li><a href="#услуги">Аквариуми</a></li>
-            <li><a href="#услуги">Стъкло по размер</a></li>
+            <li><a href="#services">Душ кабини</a></li>
+            <li><a href="#services">Огледала</a></li>
+            <li><a href="#services">Паравани</a></li>
+            <li><a href="#services">Аквариуми</a></li>
+            <li><a href="#services">Маси</a></li>
+            <li><a href="#services">B2B стъкло</a></li>
           </ul>
         </div>
 
         <div className="footer-col">
-          <h4>Контакти</h4>
+          <h4>Контакт</h4>
           <ul>
-            <li><a href="tel:+359XXXXXXXXX">+359 XX XXX XXXX</a></li>
-            <li><a href="mailto:info@onglass.bg">info@onglass.bg</a></li>
-            <li><a href="#контакти">Пловдив, България</a></li>
+            <li><a href="tel:+359000000000">+359 __ ___ ____</a></li>
+            <li><a href="mailto:office@onglass.bg">office@onglass.bg</a></li>
+            <li><a href="#contact">Пловдив</a></li>
           </ul>
         </div>
       </div>
 
       <div className="footer-bottom">
         <span>© {new Date().getFullYear()} O&N Glass. Всички права запазени.</span>
-        <span>Пловдив, България</span>
+        <span>Дизайн с прецизност на занаятчия</span>
       </div>
     </footer>
   )
