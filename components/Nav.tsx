@@ -1,11 +1,17 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import {
+  getDisplacementFilter,
+  supportsBackdropFilterUrl,
+} from '@/lib/liquidGlass'
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const navRef = useRef<HTMLElement>(null)
+  const glassRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 40)
@@ -13,8 +19,46 @@ export default function Nav() {
     return () => window.removeEventListener('scroll', handler)
   }, [])
 
+  useEffect(() => {
+    const nav = navRef.current
+    const glass = glassRef.current
+    if (!nav || !glass) return
+
+    const apply = () => {
+      const rect = nav.getBoundingClientRect()
+      const width = Math.round(rect.width)
+      const height = Math.round(rect.height)
+      if (!width || !height) return
+
+      if (supportsBackdropFilterUrl()) {
+        const filter = getDisplacementFilter({
+          width,
+          height,
+          radius: height / 2,
+          depth: 8,
+          strength: 60,
+          chromaticAberration: 4,
+        })
+        glass.style.backdropFilter = `blur(2px) url('${filter}') saturate(1.5) brightness(1.1)`
+        ;(glass.style as unknown as Record<string, string>)['-webkit-backdrop-filter'] =
+          `blur(2px) url('${filter}') saturate(1.5) brightness(1.1)`
+      } else {
+        glass.style.backdropFilter = 'blur(30px) saturate(180%)'
+        ;(glass.style as unknown as Record<string, string>)['-webkit-backdrop-filter'] =
+          'blur(30px) saturate(180%)'
+      }
+    }
+
+    apply()
+    const ro = new ResizeObserver(apply)
+    ro.observe(nav)
+    return () => ro.disconnect()
+  }, [])
+
   return (
-    <nav className={`nav${scrolled ? ' scrolled' : ''}`} style={{ position: 'relative' }}>
+    <nav ref={navRef} className={`nav${scrolled ? ' scrolled' : ''}`}>
+      <div ref={glassRef} className="nav-glass" aria-hidden />
+
       <Link href="/" className="logo">
         <span className="logo-mark">
           O<em>&</em>N
