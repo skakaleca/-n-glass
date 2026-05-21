@@ -180,6 +180,30 @@ nav .logo {
 }
 .nav-cta:hover { background: var(--accent); transform: translateY(-1px); }
 
+.nav-v2-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: linear-gradient(135deg, rgba(138, 168, 156, 0.35), rgba(255, 255, 255, 0.5));
+  border: 1px solid rgba(45, 74, 62, 0.25);
+  border-radius: 999px;
+  text-decoration: none !important;
+  transition: all 0.25s;
+  font-weight: 500;
+}
+.nav-v2-badge::after { display: none !important; }
+.nav-v2-badge:hover {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
 .nav-mobile-btn {
   display: none;
   background: transparent;
@@ -331,15 +355,52 @@ h1 em {
 
 .glass-pane {
   position: absolute;
-  border: 1px solid rgba(45, 74, 62, 0.25);
-  background: linear-gradient(135deg,
-    rgba(255, 255, 255, 0.4) 0%,
-    rgba(138, 168, 156, 0.15) 50%,
-    rgba(255, 255, 255, 0.3) 100%);
-  backdrop-filter: blur(8px);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  background:
+    linear-gradient(135deg,
+      rgba(255, 255, 255, 0.45) 0%,
+      rgba(255, 255, 255, 0.15) 40%,
+      rgba(138, 168, 156, 0.18) 70%,
+      rgba(255, 255, 255, 0.35) 100%);
+  backdrop-filter: blur(18px) saturate(1.4) brightness(1.05);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4) brightness(1.05);
   box-shadow:
-    0 1px 0 rgba(255,255,255,0.6) inset,
-    0 30px 60px -20px rgba(45, 74, 62, 0.2);
+    0 1px 0 rgba(255, 255, 255, 0.85) inset,
+    0 -1px 0 rgba(255, 255, 255, 0.25) inset,
+    1px 0 0 rgba(255, 255, 255, 0.35) inset,
+    -1px 0 0 rgba(255, 255, 255, 0.2) inset,
+    0 0 24px rgba(255, 255, 255, 0.15) inset,
+    0 30px 60px -20px rgba(45, 74, 62, 0.25),
+    0 12px 24px -8px rgba(45, 74, 62, 0.15);
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.glass-pane::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(115deg,
+      transparent 0%,
+      transparent 40%,
+      rgba(255, 255, 255, 0.45) 48%,
+      rgba(255, 255, 255, 0.15) 55%,
+      transparent 65%,
+      transparent 100%);
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+.glass-pane::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.012' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.4 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  opacity: 0.5;
+  mix-blend-mode: screen;
+  pointer-events: none;
 }
 .pane-1 {
   top: 5%;
@@ -555,12 +616,38 @@ section {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 3rem;
-  background: white;
-  border: 1px solid var(--line);
-  border-radius: 4px;
+  background:
+    linear-gradient(135deg,
+      rgba(255, 255, 255, 0.65) 0%,
+      rgba(255, 255, 255, 0.45) 50%,
+      rgba(255, 255, 255, 0.55) 100%);
+  backdrop-filter: blur(28px) saturate(1.5);
+  -webkit-backdrop-filter: blur(28px) saturate(1.5);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 30px 80px -30px rgba(0,0,0,0.12);
+  position: relative;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 -1px 0 rgba(255, 255, 255, 0.3) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.25) inset,
+    0 30px 80px -30px rgba(45, 74, 62, 0.25),
+    0 16px 40px -16px rgba(0, 0, 0, 0.12);
+  isolation: isolate;
 }
+
+.calc-wrap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='cg'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.01' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.35 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23cg)'/%3E%3C/svg%3E");
+  opacity: 0.6;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.calc-wrap > * { position: relative; z-index: 1; }
 
 .calc-form { padding: 3rem; }
 

@@ -28,6 +28,7 @@ export default function Nav() {
         <li><a href="#calculator" onClick={() => setMobileOpen(false)}>Калкулатор</a></li>
         <li><a href="#about" onClick={() => setMobileOpen(false)}>За нас</a></li>
         <li><a href="#contact" onClick={() => setMobileOpen(false)}>Контакт</a></li>
+        <li><Link href="/v2" className="nav-v2-badge" onClick={() => setMobileOpen(false)}>v2 ✨</Link></li>
       </ul>
 
       <a href="#contact" className="nav-cta" style={{ display: mobileOpen ? 'none' : undefined }}>
