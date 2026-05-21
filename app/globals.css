@@ -37,7 +37,7 @@ body::before {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* ===== NAVIGATION — Realistic Frosted Glass ===== */
+/* ===== NAVIGATION — same glass as v2 nav ===== */
 .v1-nav {
   position: fixed;
   top: 1rem;
@@ -49,67 +49,24 @@ body::before {
   justify-content: space-between;
   align-items: center;
   border-radius: 999px;
-  overflow: hidden;
-  isolation: isolate;
 
-  /* Very transparent so blur is clearly visible */
-  background: rgba(255, 255, 255, 0.15);
-
-  /* The frosted glass effect */
-  backdrop-filter: blur(24px) saturate(160%) brightness(106%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%) brightness(106%);
-
-  /* Polished glass edges */
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.32);
+  backdrop-filter: blur(18px) saturate(125%);
+  -webkit-backdrop-filter: blur(18px) saturate(125%);
+  border: 0.5px solid rgba(255, 255, 255, 0.45);
   box-shadow:
-    0 2px 0 rgba(255, 255, 255, 0.85) inset,
-    0 -1px 0 rgba(255, 255, 255, 0.2) inset,
-    0 12px 40px -12px rgba(28, 55, 40, 0.22),
-    0 4px 16px -4px rgba(0, 0, 0, 0.08);
-
-  transition: background 0.3s, backdrop-filter 0.3s;
-}
-
-/* Edge brightness bands — thick glass lit from above */
-.v1-nav::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background:
-    linear-gradient(180deg,
-      rgba(255, 255, 255, 0.45) 0%,
-      rgba(255, 255, 255, 0.1) 12%,
-      transparent 30%),
-    radial-gradient(ellipse at 25% 0%, rgba(255, 255, 255, 0.35) 0%, transparent 50%);
-  pointer-events: none;
-}
-
-/* Frosted surface noise — acid-etched texture */
-.v1-nav::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='80'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.065 .065' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .7 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 400px 80px;
-  opacity: 0.55;
-  mix-blend-mode: screen;
-  pointer-events: none;
+    0 1px 0 rgba(255, 255, 255, 0.45) inset,
+    0 16px 40px -20px rgba(20, 18, 12, 0.12);
+  transition: background 0.3s, backdrop-filter 0.3s, box-shadow 0.3s;
 }
 
 .v1-nav.scrolled {
-  background: rgba(244, 242, 237, 0.35);
-  backdrop-filter: blur(32px) saturate(180%) brightness(107%);
-  -webkit-backdrop-filter: blur(32px) saturate(180%) brightness(107%);
+  background: rgba(250, 248, 243, 0.55);
 }
-
-.v1-nav > * { position: relative; z-index: 1; }
 
 .v1-nav .nav-links a,
 .v1-nav .logo {
   font-weight: 500;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 .logo {
