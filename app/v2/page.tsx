@@ -63,7 +63,7 @@ function Navbar() {
         padding: '14px 16px 14px 22px',
         display: 'flex', alignItems: 'center', gap: 18,
         transition: 'padding .2s ease, background .2s ease',
-        background: scrolled ? 'rgba(250,248,243,0.78)' : 'var(--glass-tint)',
+        background: scrolled ? 'rgba(250,248,243,0.55)' : 'rgba(255,255,255,0.32)',
       }}
     >
       <a href="#top" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', color: 'var(--ink)', padding: '4px 10px 4px 6px' }}>
