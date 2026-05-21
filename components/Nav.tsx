@@ -14,7 +14,7 @@ export default function Nav() {
   }, [])
 
   return (
-    <nav className={scrolled ? 'scrolled' : ''}>
+    <nav className={`v1-nav${scrolled ? ' scrolled' : ''}`}>
       <Link href="/" className="logo">
         <span className="logo-mark">
           O<em>&</em>N
