@@ -49,14 +49,14 @@ nav {
   justify-content: space-between;
   align-items: center;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.22);
-  backdrop-filter: blur(40px) saturate(1.5);
-  -webkit-backdrop-filter: blur(40px) saturate(1.5);
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(244, 242, 237, 0.65);
+  backdrop-filter: blur(24px) saturate(1.8) brightness(1.04);
+  -webkit-backdrop-filter: blur(24px) saturate(1.8) brightness(1.04);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.25) inset,
-    0 -1px 0 rgba(255, 255, 255, 0.08) inset,
-    0 8px 24px -8px rgba(0, 0, 0, 0.1),
+    0 1px 0 rgba(255, 255, 255, 0.8) inset,
+    0 -1px 0 rgba(255, 255, 255, 0.2) inset,
+    0 8px 32px -8px rgba(0, 0, 0, 0.12),
     0 24px 48px -12px rgba(0, 0, 0, 0.08);
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
@@ -75,17 +75,17 @@ nav::before {
   inset: 0;
   border-radius: inherit;
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.08) inset,
-    0 0 20px rgba(255, 255, 255, 0.08) inset;
+    0 0 0 1px rgba(255, 255, 255, 0.5) inset,
+    0 0 40px rgba(255, 255, 255, 0.25) inset;
   pointer-events: none;
 }
 
 nav::after { display: none; }
 
 nav.scrolled {
-  background: rgba(255, 255, 255, 0.38);
-  backdrop-filter: blur(48px) saturate(1.8);
-  -webkit-backdrop-filter: blur(48px) saturate(1.8);
+  background: rgba(244, 242, 237, 0.78);
+  backdrop-filter: blur(32px) saturate(2) brightness(1.05);
+  -webkit-backdrop-filter: blur(32px) saturate(2) brightness(1.05);
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.3) inset,
     0 -1px 0 rgba(255, 255, 255, 0.1) inset,
