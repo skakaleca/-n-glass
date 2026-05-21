@@ -39,9 +39,16 @@ export default function Footer() {
 
       <div className="footer-bottom">
         <span>© {new Date().getFullYear()} O&N Glass. Всички права запазени.</span>
-        <span>
-          <a href="/v2" style={{ color: 'inherit', opacity: 0.6 }}>Опитай v2 →</a>
-        </span>
+        <a href="/v2" style={{
+          color: 'rgba(244,242,237,0.9)',
+          textDecoration: 'none',
+          fontSize: '0.75rem',
+          padding: '4px 10px',
+          border: '1px solid rgba(244,242,237,0.25)',
+          borderRadius: '999px',
+          letterSpacing: '0.03em',
+          transition: 'border-color .15s, color .15s',
+        }}>v2 →</a>
       </div>
     </footer>
   )
