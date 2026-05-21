@@ -49,68 +49,21 @@ body::before {
   justify-content: space-between;
   align-items: center;
   border-radius: 999px;
-  background:
-    linear-gradient(135deg,
-      rgba(255, 255, 255, 0.22) 0%,
-      rgba(244, 242, 237, 0.28) 50%,
-      rgba(255, 255, 255, 0.2) 100%);
-  backdrop-filter: blur(32px) saturate(1.8) brightness(1.06);
-  -webkit-backdrop-filter: blur(32px) saturate(1.8) brightness(1.06);
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.32);
+  backdrop-filter: blur(18px) saturate(125%);
+  -webkit-backdrop-filter: blur(18px) saturate(125%);
+  border: 0.5px solid rgba(255, 255, 255, 0.45);
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.95) inset,
-    0 -1px 0 rgba(255, 255, 255, 0.3) inset,
-    1px 0 0 rgba(255, 255, 255, 0.4) inset,
-    -1px 0 0 rgba(255, 255, 255, 0.25) inset,
-    0 0 30px rgba(255, 255, 255, 0.2) inset,
-    0 10px 32px -8px rgba(45, 74, 62, 0.18),
-    0 24px 48px -12px rgba(0, 0, 0, 0.1);
-  transition: background 0.4s, backdrop-filter 0.4s, box-shadow 0.4s;
-  isolation: isolate;
-  overflow: hidden;
-}
-
-.v1-nav::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(105deg,
-    transparent 0%,
-    transparent 40%,
-    rgba(255, 255, 255, 0.5) 50%,
-    rgba(255, 255, 255, 0.15) 58%,
-    transparent 68%,
-    transparent 100%);
-  mix-blend-mode: screen;
-  pointer-events: none;
-}
-
-.v1-nav::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='nv'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.012' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.35 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23nv)'/%3E%3C/svg%3E");
-  opacity: 0.45;
-  mix-blend-mode: screen;
-  pointer-events: none;
+    0 1px 0 rgba(255, 255, 255, 0.45) inset,
+    0 16px 40px -20px rgba(20, 18, 12, 0.12);
+  transition: background 0.3s, backdrop-filter 0.3s, box-shadow 0.3s;
 }
 
 .v1-nav.scrolled {
-  background:
-    linear-gradient(135deg,
-      rgba(255, 255, 255, 0.35) 0%,
-      rgba(244, 242, 237, 0.42) 50%,
-      rgba(255, 255, 255, 0.32) 100%);
-  backdrop-filter: blur(36px) saturate(1.8) brightness(1.05);
-  -webkit-backdrop-filter: blur(36px) saturate(1.8) brightness(1.05);
+  background: rgba(250, 248, 243, 0.55);
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.95) inset,
-    0 -1px 0 rgba(255, 255, 255, 0.3) inset,
-    0 0 32px rgba(255, 255, 255, 0.22) inset,
-    0 14px 36px -10px rgba(45, 74, 62, 0.2),
-    0 32px 64px -16px rgba(0, 0, 0, 0.12);
+    0 1px 0 rgba(255, 255, 255, 0.5) inset,
+    0 20px 48px -20px rgba(20, 18, 12, 0.16);
 }
 
 .v1-nav > * { position: relative; z-index: 1; }
@@ -118,7 +71,6 @@ body::before {
 .v1-nav .nav-links a,
 .v1-nav .logo {
   font-weight: 500;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
 .logo {
