@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState, type CSSProperties } from 'react'
+import Image from 'next/image'
 
 // ─── Data ───────────────────────────────────────────────────
 type Product = {
@@ -144,18 +145,21 @@ function Hero() {
         <div className="v2-grid-hero" style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr', gap: 14, minHeight: 360 }}>
           <div className="glass-matte" style={{ minHeight: 360, position: 'relative' }}>
             <div className="tile-img" style={{ position: 'absolute', inset: 14, borderRadius: 10 }}>
-              <span className="label">[ матирано · 8мм ]</span>
+              <Image src="https://picsum.photos/seed/glass-matte-hero/900/700" alt="Матирано стъкло 8 мм" fill priority style={{ objectFit: 'cover' }} sizes="(max-width: 900px) 100vw, 55vw" />
+              <span className="label" style={{ position: 'relative', zIndex: 1 }}>[ матирано · 8мм ]</span>
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             <div className="glass-matte" style={{ flex: 1, position: 'relative' }}>
               <div className="tile-img" style={{ position: 'absolute', inset: 12, borderRadius: 8 }}>
-                <span className="label">[ душ кабина ]</span>
+                <Image src="https://picsum.photos/seed/shower-cabin-hero/600/500" alt="Душ кабина" fill style={{ objectFit: 'cover' }} sizes="(max-width: 900px) 100vw, 22vw" />
+                <span className="label" style={{ position: 'relative', zIndex: 1 }}>[ душ кабина ]</span>
               </div>
             </div>
             <div className="glass-matte" style={{ flex: 1, position: 'relative' }}>
               <div className="tile-img" style={{ position: 'absolute', inset: 12, borderRadius: 8 }}>
-                <span className="label">[ огледало · фасет ]</span>
+                <Image src="https://picsum.photos/seed/mirror-facet-hero/600/500" alt="Огледало с фасет" fill style={{ objectFit: 'cover' }} sizes="(max-width: 900px) 100vw, 22vw" />
+                <span className="label" style={{ position: 'relative', zIndex: 1 }}>[ огледало · фасет ]</span>
               </div>
             </div>
           </div>
@@ -233,9 +237,19 @@ function ProductCard({ p, i }: { p: Product; i: number }) {
         flex: 1, minHeight: 180, borderRadius: 10,
         background: isB2B
           ? 'repeating-linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.06) 1px, transparent 1px, transparent 9px), linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02))'
-          : undefined,
+          : 'none',
       }}>
+        {!isB2B && (
+          <Image
+            src={`https://picsum.photos/seed/${p.id}-product/600/500`}
+            alt={p.title}
+            fill
+            style={{ objectFit: 'cover' }}
+            sizes="(max-width: 900px) 100vw, 33vw"
+          />
+        )}
         <span className="label" style={{
+          position: 'relative', zIndex: 1,
           background: isB2B ? 'rgba(255,255,255,0.1)' : undefined,
           color: isB2B ? 'rgba(236,232,225,0.7)' : undefined,
           borderColor: isB2B ? 'rgba(255,255,255,0.15)' : undefined,
