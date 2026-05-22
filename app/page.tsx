@@ -8,7 +8,7 @@ import Footer from '@/components/Footer'
 
 export default function Home() {
   return (
-    <>
+    <div className="v1-page">
       <Nav />
       <Hero />
       <Services />
@@ -34,6 +34,6 @@ export default function Home() {
       <About />
       <Contact />
       <Footer />
-    </>
+    </div>
   )
 }
