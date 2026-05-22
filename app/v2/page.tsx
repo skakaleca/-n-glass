@@ -145,20 +145,20 @@ function Hero() {
         <div className="v2-grid-hero" style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr', gap: 14, minHeight: 360 }}>
           <div className="glass-matte" style={{ minHeight: 360, position: 'relative' }}>
             <div className="tile-img" style={{ position: 'absolute', inset: 14, borderRadius: 10 }}>
-              <Image src="https://picsum.photos/seed/glass-matte-hero/900/700" alt="Матирано стъкло 8 мм" fill priority style={{ objectFit: 'cover' }} sizes="(max-width: 900px) 100vw, 55vw" />
+              <Image src="https://i1-c.pinimg.com/1200x/40/20/0a/40200aade6932a8939f1a6a89fc36f29.jpg" alt="Матирано стъкло 8 мм" fill priority style={{ objectFit: 'cover' }} sizes="(max-width: 900px) 100vw, 55vw" />
               <span className="label" style={{ position: 'relative', zIndex: 1 }}>[ матирано · 8мм ]</span>
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             <div className="glass-matte" style={{ flex: 1, position: 'relative' }}>
               <div className="tile-img" style={{ position: 'absolute', inset: 12, borderRadius: 8 }}>
-                <Image src="https://picsum.photos/seed/shower-cabin-hero/600/500" alt="Душ кабина" fill style={{ objectFit: 'cover' }} sizes="(max-width: 900px) 100vw, 22vw" />
+                <Image src="https://i1-c.pinimg.com/736x/66/8b/55/668b5582b6270b97f0e4b476c886e602.jpg" alt="Душ кабина" fill style={{ objectFit: 'cover' }} sizes="(max-width: 900px) 100vw, 22vw" />
                 <span className="label" style={{ position: 'relative', zIndex: 1 }}>[ душ кабина ]</span>
               </div>
             </div>
             <div className="glass-matte" style={{ flex: 1, position: 'relative' }}>
               <div className="tile-img" style={{ position: 'absolute', inset: 12, borderRadius: 8 }}>
-                <Image src="https://picsum.photos/seed/mirror-facet-hero/600/500" alt="Огледало с фасет" fill style={{ objectFit: 'cover' }} sizes="(max-width: 900px) 100vw, 22vw" />
+                <Image src="https://i1-c.pinimg.com/736x/e4/0a/f8/e40af891cacb55f80654ccbdb6f6048b.jpg" alt="Огледало с фасет" fill style={{ objectFit: 'cover' }} sizes="(max-width: 900px) 100vw, 22vw" />
                 <span className="label" style={{ position: 'relative', zIndex: 1 }}>[ огледало · фасет ]</span>
               </div>
             </div>
