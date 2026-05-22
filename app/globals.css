@@ -18,7 +18,12 @@
 html { scroll-behavior: smooth; }
 
 body {
-  background: var(--bg);
+  background:
+    radial-gradient(900px 600px at 12% 8%, rgba(255,255,255,0.45), transparent 60%),
+    radial-gradient(700px 500px at 88% 18%, rgba(110,140,140,0.18), transparent 70%),
+    radial-gradient(1200px 800px at 60% 90%, rgba(120,100,80,0.10), transparent 70%),
+    var(--bg);
+  background-attachment: fixed;
   color: var(--ink);
   font-family: var(--body);
   font-weight: 400;
