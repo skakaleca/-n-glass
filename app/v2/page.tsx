@@ -11,12 +11,13 @@ type Product = {
   sub: string
   detail: string
   base: number
+  img?: string
 }
 
 const PRODUCTS: Product[] = [
-  { id: 'table',  bg: 'масa',       title: 'Маси',          sub: 'Журнални • трапезни • работни',  detail: 'Прозрачно, бронзово, графит. Скосени или полирани ръбове.', base: 180 },
-  { id: 'aqua',   bg: 'аквариум',   title: 'Аквариуми',     sub: 'Силиконово залепени, по проект', detail: 'Дебелина 8–12 мм според литраж. Тествани на херметичност.', base: 320 },
-  { id: 'shower', bg: 'душ кабинa', title: 'Душ кабини',    sub: 'Безпрофилни • walk-in • врати',  detail: 'Закалено 8 мм. Easy-Clean покритие срещу варовик.', base: 420 },
+  { id: 'table',  bg: 'масa',       title: 'Маси',          sub: 'Журнални • трапезни • работни',  detail: 'Прозрачно, бронзово, графит. Скосени или полирани ръбове.', base: 180, img: 'https://i.pinimg.com/736x/4b/50/fc/4b50fcdc38b613d9c051afdb47f6a063.jpg' },
+  { id: 'aqua',   bg: 'аквариум',   title: 'Аквариуми',     sub: 'Силиконово залепени, по проект', detail: 'Дебелина 8–12 мм според литраж. Тествани на херметичност.', base: 320, img: 'https://i.pinimg.com/736x/4a/69/34/4a693407f8fd57f6366ff9425f47d8a7.jpg' },
+  { id: 'shower', bg: 'душ кабинa', title: 'Душ кабини',    sub: 'Безпрофилни • walk-in • врати',  detail: 'Закалено 8 мм. Easy-Clean покритие срещу варовик.', base: 420, img: 'https://i1-c.pinimg.com/1200x/58/07/e5/5807e5bf8bad880a8535f8ef94abeed3.jpg' },
   { id: 'screen', bg: 'паравани',   title: 'Паравани',      sub: 'Балкон • офис • кухня',          detail: 'Матирани или релефни мотиви. Дискретни алуминиеви фиксации.', base: 240 },
   { id: 'mirror', bg: 'огледалa',   title: 'Огледала',      sub: 'Декоративни • с фасет • LED',    detail: 'Сребърно или бронзово отражение. Анти-маглив гръб.', base: 140 },
   { id: 'b2b',    bg: 'B2B',        title: 'B2B по проект', sub: 'Архитекти • интериор • хотели',  detail: 'Партиди по размер. Сертификати, документация, монтажни екипи.', base: 0 },
@@ -241,7 +242,7 @@ function ProductCard({ p, i }: { p: Product; i: number }) {
       }}>
         {!isB2B && (
           <Image
-            src={`https://picsum.photos/seed/${p.id}-product/600/500`}
+            src={p.img ?? `https://picsum.photos/seed/${p.id}-product/600/500`}
             alt={p.title}
             fill
             style={{ objectFit: 'cover' }}
