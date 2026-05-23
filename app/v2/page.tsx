@@ -107,12 +107,9 @@ function Navbar() {
         background: scrolled ? 'rgba(250,248,243,0.35)' : 'rgba(255,255,255,0.12)',
       }}
     >
-      <a href="#top" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', color: 'var(--ink)', padding: '4px 10px 4px 6px' }}>
-        <div style={{ lineHeight: 1 }}>
-          <div className="wordmark" style={{ fontSize: 19, letterSpacing: '-0.005em', lineHeight: 1 }}>
-            O&amp;N<LogoSep size={19} /><em style={{ fontStyle: 'italic' }}>glass</em>
-          </div>
-          <div className="mono" style={{ fontSize: 8.5, letterSpacing: '0.16em', color: 'var(--ink-3)', marginTop: 4 }}>EST.&nbsp;2007 · ПЛОВДИВ</div>
+      <a href="#top" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', color: 'var(--ink)', padding: '4px 10px 4px 6px' }}>
+        <div className="wordmark" style={{ fontSize: 24, letterSpacing: '-0.005em', lineHeight: 1, display: 'flex', alignItems: 'center' }}>
+          O&amp;N<LogoSep size={24} /><em style={{ fontStyle: 'italic' }}>glass</em>
         </div>
       </a>
 
@@ -886,8 +883,6 @@ function Footer() {
 
           <FooterCol title="Работно време" rows={[
             ['Пон – Пет', '08:00 – 17:00'],
-            ['Събота',    '09:00 – 14:00'],
-            ['Неделя',    'затворено'],
           ]} pair />
 
           <FooterCol title="Навигация" rows={[
