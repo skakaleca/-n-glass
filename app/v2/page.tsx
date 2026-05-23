@@ -434,15 +434,6 @@ function ServiceChip({ on, onClick, title, sub }: { on: boolean; onClick: () => 
   )
 }
 
-function Row({ label, value, muted }: { label: string; value: string; muted?: boolean }) {
-  return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12.5 }}>
-      <span style={{ color: muted ? 'rgba(236,232,225,0.55)' : undefined }}>{label}</span>
-      <span className="mono" style={{ fontVariantNumeric: 'tabular-nums', color: muted ? 'rgba(236,232,225,0.75)' : undefined }}>{value}</span>
-    </div>
-  )
-}
-
 type CalcResult = {
   m2: number; perimM: number; glassCost: number; kantCost: number;
   deliveryCost: number; montageCost: number; subtotal: number;
@@ -451,6 +442,7 @@ type CalcResult = {
 
 function Summary({
   product, glass, thickness, w, h, qty, services, calc, fmt, onSend, sendState,
+  name, phone, email, setName, setPhone, setEmail,
 }: {
   product: Product
   glass: typeof GLASS_TYPE[number]
@@ -461,13 +453,27 @@ function Summary({
   fmt: (n: number) => string
   onSend: () => void
   sendState: 'idle' | 'loading' | 'ok' | 'err'
+  name: string; phone: string; email: string
+  setName: (v: string) => void; setPhone: (v: string) => void; setEmail: (v: string) => void
 }) {
   const rows = [
-    { k: `Стъкло ${glass.label.toLowerCase()} · ${thickness} мм`, v: `${fmt(calc.glassCost)} лв.` },
-    services.kant     && { k: `Кантиране (${calc.perimM.toFixed(2)} м)`, v: `${fmt(calc.kantCost)} лв.` },
-    services.delivery && { k: 'Доставка',                                v: `${fmt(calc.deliveryCost)} лв.` },
-    services.montage  && { k: 'Монтаж на място',                         v: `${fmt(calc.montageCost)} лв.` },
-  ].filter(Boolean) as { k: string; v: string }[]
+    { k: `Стъкло ${glass.label.toLowerCase()} · ${thickness} мм`, included: true },
+    services.kant     && { k: `Кантиране (${calc.perimM.toFixed(2)} м)`, included: true },
+    services.delivery && { k: 'Доставка',                                included: true },
+    services.montage  && { k: 'Монтаж на място',                         included: true },
+  ].filter(Boolean) as { k: string; included: boolean }[]
+
+  const contactInput: CSSProperties = {
+    background: 'rgba(255,255,255,0.1)',
+    border: '0.5px solid rgba(255,255,255,0.2)',
+    color: '#ece8e1',
+    borderRadius: 10,
+    padding: '10px 12px',
+    fontSize: 13,
+    width: '100%',
+  }
+
+  const canSend = name.trim().length > 0 && phone.trim().length > 0
 
   return (
     <div className="glass-matte" style={{
@@ -496,55 +502,63 @@ function Summary({
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingTop: 6 }}>
+        <div className="mono" style={{ fontSize: 10, letterSpacing: '0.12em', color: 'rgba(236,232,225,0.5)', textTransform: 'uppercase' }}>
+          Включено в офертата
+        </div>
         {rows.map((r, i) => (
-          <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', borderTop: '0.5px dashed rgba(255,255,255,0.15)', paddingTop: 10, fontSize: 13 }}>
-            <span style={{ color: 'rgba(236,232,225,0.75)' }}>{r.k}</span>
-            <span className="mono" style={{ fontVariantNumeric: 'tabular-nums' }}>{r.v}</span>
+          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13 }}>
+            <svg width="13" height="13" viewBox="0 0 12 12" fill="none" style={{ flexShrink: 0 }}>
+              <path d="M2 6.5L4.5 9L10 3" stroke="#ece8e1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.7" />
+            </svg>
+            <span style={{ color: 'rgba(236,232,225,0.8)' }}>{r.k}</span>
           </div>
         ))}
         {qty > 1 && (
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', borderTop: '0.5px dashed rgba(255,255,255,0.15)', paddingTop: 10, fontSize: 12 }}>
-            <span style={{ color: 'rgba(236,232,225,0.55)' }}>× {qty} бр.</span>
-            <span />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13 }}>
+            <svg width="13" height="13" viewBox="0 0 12 12" fill="none" style={{ flexShrink: 0 }}>
+              <path d="M2 6.5L4.5 9L10 3" stroke="#ece8e1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.7" />
+            </svg>
+            <span style={{ color: 'rgba(236,232,225,0.8)' }}>{qty} броя</span>
           </div>
         )}
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 6, paddingTop: 10, borderTop: '0.5px solid rgba(255,255,255,0.2)' }}>
-        <Row label="Междинна сума" value={`${fmt(calc.subtotal)} лв.`} muted />
-        <Row label="ДДС 20%" value={`${fmt(calc.vat)} лв.`} muted />
-      </div>
-
       <div style={{
-        display: 'flex', alignItems: 'baseline', justifyContent: 'space-between',
         paddingTop: 12, borderTop: '1px solid rgba(255,255,255,0.25)',
       }}>
-        <span style={{ fontSize: 13, color: 'rgba(236,232,225,0.7)' }}>За плащане</span>
-        <span className="serif" style={{ fontSize: 42, letterSpacing: '-0.01em', fontVariantNumeric: 'tabular-nums' }}>
-          {fmt(calc.total)} <span style={{ fontSize: 22, opacity: 0.7 }}>лв.</span>
-        </span>
+        <span style={{ fontSize: 13, color: 'rgba(236,232,225,0.7)' }}>Ориентировъчно</span>
+        <div className="serif" style={{ fontSize: 34, letterSpacing: '-0.01em', fontVariantNumeric: 'tabular-nums', marginTop: 2 }}>
+          {fmt(calc.total * 0.9)} – {fmt(calc.total * 1.1)} <span style={{ fontSize: 18, opacity: 0.7 }}>лв.</span>
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <input type="text" placeholder="Вашето име *" value={name} onChange={e => setName(e.target.value)} style={contactInput} />
+        <input type="tel" placeholder="Телефон *" value={phone} onChange={e => setPhone(e.target.value)} style={contactInput} />
+        <input type="email" placeholder="Имейл (по избор)" value={email} onChange={e => setEmail(e.target.value)} style={contactInput} />
       </div>
 
       <button
         className="btn"
         onClick={onSend}
-        disabled={sendState === 'loading' || sendState === 'ok'}
+        disabled={sendState === 'loading' || sendState === 'ok' || !canSend}
         style={{
           background: '#ece8e1', color: '#1d1c19',
-          justifyContent: 'center', padding: '12px 16px', marginTop: 4,
+          justifyContent: 'center', padding: '12px 16px',
           border: 'none',
-          opacity: sendState === 'loading' ? 0.6 : 1,
+          opacity: (sendState === 'loading' || !canSend) ? 0.5 : 1,
+          cursor: canSend ? 'pointer' : 'not-allowed',
           transition: 'opacity .15s ease',
         }}
       >
         {sendState === 'loading' && 'Изпращане...'}
         {sendState === 'ok' && '✓ Заявката е изпратена'}
         {sendState === 'err' && 'Грешка — опитайте пак'}
-        {sendState === 'idle' && (<>Изпрати запитване <Arrow /></>)}
+        {sendState === 'idle' && (<>Изискай оферта <Arrow /></>)}
       </button>
 
       <div className="mono" style={{ fontSize: 10, color: 'rgba(236,232,225,0.45)', lineHeight: 1.5, textAlign: 'center' }}>
-        Ориентировъчна цена. Финалната оферта се потвърждава от технолог.
+        Ориентировъчен диапазон. Точната оферта се изготвя от технолог в рамките на работния ден.
       </div>
     </div>
   )
@@ -559,6 +573,9 @@ function Calculator() {
   const [qty, setQty] = useState(1)
   const [services, setServices] = useState({ kant: true, delivery: false, montage: false })
   const [sendState, setSendState] = useState<'idle' | 'loading' | 'ok' | 'err'>('idle')
+  const [name, setName] = useState('')
+  const [phone, setPhone] = useState('')
+  const [email, setEmail] = useState('')
 
   const calcProducts = PRODUCTS.filter(p => p.id !== 'b2b' && p.id !== 'obekt')
   const product = PRODUCTS.find(p => p.id === productId) || PRODUCTS[0]
@@ -587,6 +604,9 @@ function Calculator() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          name,
+          phone,
+          email,
           glass_type: `${product.title} · ${glass.label}`,
           width_cm: w / 10,
           height_cm: h / 10,
@@ -693,7 +713,9 @@ function Calculator() {
           </div>
 
           <Summary product={product} glass={glass} thickness={thickness} w={w} h={h} qty={qty}
-                   services={services} calc={calc} fmt={fmt} onSend={handleSend} sendState={sendState} />
+                   services={services} calc={calc} fmt={fmt} onSend={handleSend} sendState={sendState}
+                   name={name} phone={phone} email={email}
+                   setName={setName} setPhone={setPhone} setEmail={setEmail} />
         </div>
       </div>
     </section>
