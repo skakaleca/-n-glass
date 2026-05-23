@@ -538,27 +538,29 @@ function Summary({
         <input type="email" placeholder="Имейл (по избор)" value={email} onChange={e => setEmail(e.target.value)} style={contactInput} />
       </div>
 
-      <button
-        className="btn"
-        onClick={onSend}
-        disabled={sendState === 'loading' || sendState === 'ok' || !canSend}
-        style={{
-          background: '#ece8e1', color: '#1d1c19',
-          justifyContent: 'center', padding: '12px 16px',
-          border: 'none',
-          opacity: (sendState === 'loading' || !canSend) ? 0.5 : 1,
-          cursor: canSend ? 'pointer' : 'not-allowed',
-          transition: 'opacity .15s ease',
-        }}
-      >
-        {sendState === 'loading' && 'Изпращане...'}
-        {sendState === 'ok' && '✓ Заявката е изпратена'}
-        {sendState === 'err' && 'Грешка — опитайте пак'}
-        {sendState === 'idle' && (<>Изискай оферта <Arrow /></>)}
-      </button>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <button
+          className="btn"
+          onClick={onSend}
+          disabled={sendState === 'loading' || sendState === 'ok' || !canSend}
+          style={{
+            background: '#ece8e1', color: '#1d1c19',
+            justifyContent: 'center', padding: '12px 16px',
+            border: 'none',
+            opacity: (sendState === 'loading' || !canSend) ? 0.5 : 1,
+            cursor: canSend ? 'pointer' : 'not-allowed',
+            transition: 'opacity .15s ease',
+          }}
+        >
+          {sendState === 'loading' && 'Изпращане...'}
+          {sendState === 'ok' && '✓ Заявката е изпратена'}
+          {sendState === 'err' && 'Грешка — опитайте пак'}
+          {sendState === 'idle' && (<>Изискай оферта <Arrow /></>)}
+        </button>
 
-      <div className="mono" style={{ fontSize: 10, color: 'rgba(236,232,225,0.45)', lineHeight: 1.5, textAlign: 'center' }}>
-        Ориентировъчен диапазон. Точната оферта се изготвя от технолог в рамките на работния ден.
+        <div className="mono" style={{ fontSize: 10, color: 'rgba(236,232,225,0.45)', lineHeight: 1.5, textAlign: 'center' }}>
+          Ориентировъчен диапазон. Точната оферта се изготвя от технолог в рамките на работния ден.
+        </div>
       </div>
     </div>
   )
