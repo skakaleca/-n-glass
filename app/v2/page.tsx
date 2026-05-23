@@ -871,7 +871,7 @@ function Footer() {
               </span>
             </div>
             <p className="dim" style={{ fontSize: 13.5, lineHeight: 1.55, maxWidth: 360, margin: '0 0 12px' }}>
-              Семейно ателие за индивидуално стъкло от 2007. Собствено производство в кв. Изгрев, Пловдив.
+              Семейно ателие за индивидуално стъкло от 2007. Собствено производство в с.&nbsp;Войсил.
             </p>
             <div className="mono" style={{ fontSize: 10, letterSpacing: '0.12em', color: 'var(--ink-3)', textTransform: 'uppercase' }}>
               Основана · 2007 · Пловдив
@@ -881,7 +881,7 @@ function Footer() {
           <FooterCol title="Контакт" rows={[
             ['+359 32 800 2007', 'tel'],
             ['работилница@onglass.bg', 'mail'],
-            ['Изгрев 14, Пловдив', 'addr'],
+            ['с. Войсил, ул. Девета №3', 'addr'],
           ]} />
 
           <FooterCol title="Работно време" rows={[
