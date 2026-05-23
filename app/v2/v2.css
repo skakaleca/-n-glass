@@ -231,6 +231,21 @@
   letter-spacing: 0.02em;
 }
 
+/* ── Motion ─────────────────────────────────────────────── */
+@keyframes v2FadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes v2Float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-5px); }
+}
+
+.v2-page .glass-matte {
+  transition: box-shadow 0.25s ease, transform 0.2s ease;
+}
+
 /* responsive */
 @media (max-width: 900px) {
   .v2-page .v2-nav { padding: 10px 12px !important; gap: 10px !important; }
