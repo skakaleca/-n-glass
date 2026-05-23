@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Fraunces, Inter_Tight } from 'next/font/google'
+import { Fraunces, Inter_Tight, DM_Serif_Display } from 'next/font/google'
 import './globals.css'
 
 const fraunces = Fraunces({
@@ -14,6 +14,14 @@ const interTight = Inter_Tight({
   subsets: ['latin', 'cyrillic'],
   weight: ['300', '400', '500', '600'],
   variable: '--font-inter-tight',
+  display: 'swap',
+})
+
+const dmSerifDisplay = DM_Serif_Display({
+  subsets: ['latin'],
+  weight: '400',
+  style: ['normal', 'italic'],
+  variable: '--font-dm-serif',
   display: 'swap',
 })
 
@@ -36,7 +44,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="bg" className={`${fraunces.variable} ${interTight.variable}`}>
+    <html lang="bg" className={`${fraunces.variable} ${interTight.variable} ${dmSerifDisplay.variable}`}>
       <body style={{ fontFamily: 'var(--font-inter-tight), sans-serif' }}>
         {children}
       </body>

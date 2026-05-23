@@ -1,6 +1,31 @@
 'use client'
 
-import { useEffect, useMemo, useState, type CSSProperties } from 'react'
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
+import Image from 'next/image'
+
+// ─── Reveal hook ────────────────────────────────────────────
+function useReveal(delay = 0) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [visible, setVisible] = useState(false)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect() } },
+      { threshold: 0.07, rootMargin: '0px 0px -30px 0px' }
+    )
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
+  return {
+    ref,
+    style: {
+      opacity: visible ? 1 : 0,
+      transform: visible ? 'translateY(0)' : 'translateY(14px)',
+      transition: `opacity 0.55s ease ${delay}s, transform 0.55s ease ${delay}s`,
+    } as CSSProperties,
+  }
+}
 
 // ─── Data ───────────────────────────────────────────────────
 type Product = {
@@ -10,27 +35,44 @@ type Product = {
   sub: string
   detail: string
   base: number
+  img?: string
 }
 
 const PRODUCTS: Product[] = [
-  { id: 'table',  bg: 'масa',       title: 'Маси',          sub: 'Журнални • трапезни • работни',  detail: 'Прозрачно, бронзово, графит. Скосени или полирани ръбове.', base: 180 },
-  { id: 'aqua',   bg: 'аквариум',   title: 'Аквариуми',     sub: 'Силиконово залепени, по проект', detail: 'Дебелина 8–12 мм според литраж. Тествани на херметичност.', base: 320 },
-  { id: 'shower', bg: 'душ кабинa', title: 'Душ кабини',    sub: 'Безпрофилни • walk-in • врати',  detail: 'Закалено 8 мм. Easy-Clean покритие срещу варовик.', base: 420 },
-  { id: 'screen', bg: 'паравани',   title: 'Паравани',      sub: 'Балкон • офис • кухня',          detail: 'Матирани или релефни мотиви. Дискретни алуминиеви фиксации.', base: 240 },
-  { id: 'mirror', bg: 'огледалa',   title: 'Огледала',      sub: 'Декоративни • с фасет • LED',    detail: 'Сребърно или бронзово отражение. Анти-маглив гръб.', base: 140 },
-  { id: 'b2b',    bg: 'B2B',        title: 'B2B по проект', sub: 'Архитекти • интериор • хотели',  detail: 'Партиди по размер. Сертификати, документация, монтажни екипи.', base: 0 },
+  { id: 'table',   bg: 'маси',        title: 'Маси',            sub: 'Журнални • трапезни • работни',       detail: 'Прозрачно, бронзово, графит. Скосени или полирани ръбове.',              base: 180, img: 'https://i.pinimg.com/736x/4b/50/fc/4b50fcdc38b613d9c051afdb47f6a063.jpg' },
+  { id: 'aqua',    bg: 'аквариуми',   title: 'Аквариуми',       sub: 'Силиконово залепени, по проект',      detail: 'Дебелина 8–12 мм според литраж. Тествани на херметичност.',              base: 320, img: 'https://i.pinimg.com/736x/4a/69/34/4a693407f8fd57f6366ff9425f47d8a7.jpg' },
+  { id: 'shower',  bg: 'душ кабини',  title: 'Душ кабини',      sub: 'Безпрофилни • walk-in • врати',       detail: 'Закалено 8 мм. Easy-Clean покритие срещу варовик.',                       base: 420, img: 'https://i1-c.pinimg.com/1200x/58/07/e5/5807e5bf8bad880a8535f8ef94abeed3.jpg' },
+  { id: 'screen',  bg: 'паравани',    title: 'Паравани',        sub: 'Балкон • офис • кухня',               detail: 'Матирани или релефни мотиви. Дискретни алуминиеви фиксации.',             base: 240 },
+  { id: 'mirror',  bg: 'огледала',    title: 'Огледала',        sub: 'Декоративни • с фасет • LED',         detail: 'Сребърно или бронзово отражение. Анти-маглив гръб.',                     base: 140 },
+  { id: 'glaze',   bg: 'остъкления',  title: 'Остъкления',      sub: 'Фасади • прозорци • зимни градини',   detail: 'Структурно остъкляване и монолитно стъкло. За жилищни и търговски обекти.', base: 95 },
+  { id: 'vitrina', bg: 'витрини',     title: 'Витрини',         sub: 'Магазини • банки • шоуруми',          detail: 'Единично и двойно остъкляване. С алуминиев профил или безрамково.',       base: 210 },
+  { id: 'obekt',   bg: 'обекти',      title: 'Търговски обекти', sub: 'Ресторанти • хотели • фризьорски',    detail: 'Разделителни прегради, огледала и витрини за цял обект. Цени по договор.', base: 0 },
+  { id: 'b2b',     bg: 'B2B',         title: 'B2B по проект',   sub: 'Архитекти • интериор • хотели',       detail: 'Партиди по размер. Сертификати, документация, монтажни екипи.',           base: 0 },
 ]
 
 const THICKNESS = [4, 5, 6, 8, 10, 12]
 
 const GLASS_TYPE = [
-  { id: 'clear',    label: 'Прозрачно',       mult: 1.00 },
-  { id: 'matte',    label: 'Матирано',        mult: 1.18 },
-  { id: 'bronze',   label: 'Антиваровиково',  mult: 1.25 },
-  { id: 'graphite', label: 'Цветно',          mult: 1.32 },
+  { id: 'clear',    label: 'Прозрачно',      mult: 1.00 },
+  { id: 'matte',    label: 'Матирано',       mult: 1.18 },
+  { id: 'bronze',   label: 'Антиваровиково', mult: 1.25 },
+  { id: 'graphite', label: 'Цветно',         mult: 1.32 },
 ]
 
 const PRICE_PER_M2: Record<number, number> = { 4: 38, 5: 46, 6: 54, 8: 72, 10: 96, 12: 128 }
+
+// ─── Wordmark separator ─────────────────────────────────────
+function LogoSep({ size = 19 }: { size?: number }) {
+  return (
+    <span style={{
+      display: 'inline-block', width: 1,
+      height: size * 0.72,
+      background: 'currentColor', opacity: 0.2,
+      margin: `0 ${size * 0.38}px 0 ${size * 0.32}px`,
+      verticalAlign: 'middle',
+    }} />
+  )
+}
 
 // ─── Small bits ─────────────────────────────────────────────
 function Arrow({ size = 14 }: { size?: number }) {
@@ -59,19 +101,20 @@ function Navbar() {
         top: 16, left: '50%', transform: 'translateX(-50%)',
         zIndex: 100,
         width: 'calc(100% - 32px)',
-        maxWidth: 1240,
-        padding: '14px 16px 14px 22px',
+        maxWidth: 1440,
+        padding: '14px 22px 14px 28px',
+        borderRadius: 999,
         display: 'flex', alignItems: 'center', gap: 18,
         transition: 'padding .2s ease, background .2s ease',
-        background: scrolled ? 'rgba(250,248,243,0.55)' : 'rgba(255,255,255,0.32)',
+        background: scrolled ? 'rgba(250,248,243,0.35)' : 'rgba(255,255,255,0.12)',
       }}
     >
       <a href="#top" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', color: 'var(--ink)', padding: '4px 10px 4px 6px' }}>
         <div style={{ lineHeight: 1 }}>
           <div className="wordmark" style={{ fontSize: 19, letterSpacing: '-0.005em', lineHeight: 1 }}>
-            O&amp;N&nbsp;<em style={{ fontStyle: 'italic' }}>glass</em>
+            O&amp;N<LogoSep size={19} /><em style={{ fontStyle: 'italic' }}>glass</em>
           </div>
-          <div className="mono" style={{ fontSize: 8.5, letterSpacing: '0.16em', color: 'var(--ink-3)', marginTop: 4 }}>EST.&nbsp;2008 · ПЛОВДИВ</div>
+          <div className="mono" style={{ fontSize: 8.5, letterSpacing: '0.16em', color: 'var(--ink-3)', marginTop: 4 }}>EST.&nbsp;2007 · ПЛОВДИВ</div>
         </div>
       </a>
 
@@ -84,11 +127,6 @@ function Navbar() {
       </nav>
 
       <div style={{ flex: 1 }} />
-
-      <div className="chip" style={{ borderColor: 'rgba(46,74,74,0.3)', color: 'var(--accent)' }}>
-        <span className="dot" />
-        отворено · до&nbsp;18:00
-      </div>
 
       <a className="btn btn-primary" href="#calculator">
         Изчисли цена <Arrow />
@@ -111,10 +149,6 @@ function Hero() {
   return (
     <section id="top" className="v2-hero" style={{ position: 'relative', paddingTop: 140, paddingBottom: 80 }}>
       <div style={{ maxWidth: 1240, margin: '0 auto', padding: '0 24px' }}>
-        <div className="chip" style={{ marginBottom: 22 }}>
-          <span className="dot" />
-          приемаме поръчки за пролет 2026
-        </div>
 
         <h1 className="serif" style={{
           fontSize: 'clamp(56px, 8.5vw, 124px)',
@@ -122,6 +156,7 @@ function Hero() {
           letterSpacing: '-0.02em',
           margin: '0 0 28px',
           maxWidth: 1100,
+          animation: 'v2FadeInUp 0.75s ease backwards',
         }}>
           Стъкло, прецизно <br />
           по&nbsp;вашите <em style={{ fontStyle: 'italic', color: 'var(--accent)' }}>размери</em>.
@@ -130,31 +165,32 @@ function Hero() {
         <p className="dim" style={{
           fontSize: 18, lineHeight: 1.5, maxWidth: 560, margin: '0 0 36px',
           letterSpacing: '-0.005em',
+          animation: 'v2FadeInUp 0.75s 0.12s ease backwards',
         }}>
           Маси, аквариуми, душ&nbsp;кабини, паравани и&nbsp;огледала — изработени
           в&nbsp;собствено ателие. Кантиране, доставка и&nbsp;монтаж от&nbsp;един екип.
         </p>
 
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 56 }}>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 56, animation: 'v2FadeInUp 0.75s 0.22s ease backwards' }}>
           <a className="btn btn-primary" href="#calculator">Изчисли поръчка <Arrow /></a>
           <a className="btn btn-ghost" href="#products">Разгледай продукти</a>
         </div>
 
-        <div className="v2-grid-hero" style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr', gap: 14, minHeight: 360 }}>
-          <div className="glass-matte" style={{ minHeight: 360, position: 'relative' }}>
+        <div className="v2-grid-hero" style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr', gap: 14, minHeight: 360, animation: 'v2FadeInUp 0.8s 0.32s ease backwards' }}>
+          <div className="glass-matte" style={{ minHeight: 360, position: 'relative', animation: 'v2Float 7s ease-in-out infinite' }}>
             <div className="tile-img" style={{ position: 'absolute', inset: 14, borderRadius: 10 }}>
-              <span className="label">[ матирано · 8мм ]</span>
+              <Image src="https://i1-c.pinimg.com/1200x/40/20/0a/40200aade6932a8939f1a6a89fc36f29.jpg" alt="Матирано стъкло 8 мм" fill priority style={{ objectFit: 'cover' }} sizes="(max-width: 900px) 100vw, 55vw" />
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-            <div className="glass-matte" style={{ flex: 1, position: 'relative' }}>
+            <div className="glass-matte" style={{ flex: 1, position: 'relative', animation: 'v2Float 9s 0.7s ease-in-out infinite' }}>
               <div className="tile-img" style={{ position: 'absolute', inset: 12, borderRadius: 8 }}>
-                <span className="label">[ душ кабина ]</span>
+                <Image src="https://i1-c.pinimg.com/736x/66/8b/55/668b5582b6270b97f0e4b476c886e602.jpg" alt="Душ кабина" fill style={{ objectFit: 'cover' }} sizes="(max-width: 900px) 100vw, 22vw" />
               </div>
             </div>
-            <div className="glass-matte" style={{ flex: 1, position: 'relative' }}>
+            <div className="glass-matte" style={{ flex: 1, position: 'relative', animation: 'v2Float 6.5s 1.4s ease-in-out infinite' }}>
               <div className="tile-img" style={{ position: 'absolute', inset: 12, borderRadius: 8 }}>
-                <span className="label">[ огледало · фасет ]</span>
+                <Image src="https://i1-c.pinimg.com/736x/e4/0a/f8/e40af891cacb55f80654ccbdb6f6048b.jpg" alt="Огледало с фасет" fill style={{ objectFit: 'cover' }} sizes="(max-width: 900px) 100vw, 22vw" />
               </div>
             </div>
           </div>
@@ -192,86 +228,83 @@ function SectionHead({ title, sub }: { title: string; sub?: string }) {
 
 // ─── Products ───────────────────────────────────────────────
 function ProductCard({ p, i }: { p: Product; i: number }) {
+  const { ref, style: revealStyle } = useReveal(i * 0.07)
   const [hovered, setHovered] = useState(false)
   const isB2B = p.id === 'b2b'
   return (
-    <div
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      className="glass-matte"
-      style={{
-        padding: 18,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 14,
-        minHeight: 360,
-        transition: 'transform .2s ease, box-shadow .2s ease',
-        transform: hovered ? 'translateY(-2px)' : 'none',
-        cursor: 'default',
-        background: isB2B
-          ? 'linear-gradient(180deg, rgba(46,74,74,0.85), rgba(29,42,42,0.95))'
-          : undefined,
-        color: isB2B ? '#ece8e1' : undefined,
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-        <div className="mono" style={{
-          fontSize: 10.5, letterSpacing: '0.14em',
-          color: isB2B ? 'rgba(236,232,225,0.6)' : 'var(--ink-3)',
+    <div ref={ref} style={revealStyle}>
+      <div
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        className="glass-matte"
+        style={{
+          padding: 18,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 14,
+          minHeight: 360,
+          transform: hovered ? 'translateY(-3px)' : 'none',
+          cursor: 'default',
+          background: isB2B
+            ? 'linear-gradient(180deg, rgba(46,74,74,0.85), rgba(29,42,42,0.95))'
+            : undefined,
+          color: isB2B ? '#ece8e1' : undefined,
+        }}
+      >
+        <div className="tile-img" style={{
+          flex: 1, minHeight: 180, borderRadius: 10,
+          background: isB2B
+            ? 'repeating-linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.06) 1px, transparent 1px, transparent 9px), linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02))'
+            : 'none',
         }}>
-          0{i + 1}
+          {!isB2B && (
+            <Image
+              src={p.img ?? `https://picsum.photos/seed/${p.id}-product/600/500`}
+              alt={p.title}
+              fill
+              style={{ objectFit: 'cover' }}
+              sizes="(max-width: 900px) 100vw, 33vw"
+            />
+          )}
         </div>
-        {!isB2B && (
-          <div className="mono" style={{ fontSize: 10.5, color: 'var(--ink-3)' }}>
-            от {p.base} лв.
+
+        <div>
+          <h3 className="serif" style={{ fontSize: 28, letterSpacing: '-0.01em', margin: '0 0 4px' }}>
+            {p.title}
+          </h3>
+          <div style={{
+            fontSize: 12.5, color: isB2B ? 'rgba(236,232,225,0.7)' : 'var(--ink-2)',
+            fontFamily: 'Geist Mono, monospace', letterSpacing: '0.01em',
+          }}>
+            {p.sub}
           </div>
-        )}
-      </div>
-
-      <div className="tile-img" style={{
-        flex: 1, minHeight: 180, borderRadius: 10,
-        background: isB2B
-          ? 'repeating-linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.06) 1px, transparent 1px, transparent 9px), linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02))'
-          : undefined,
-      }}>
-        <span className="label" style={{
-          background: isB2B ? 'rgba(255,255,255,0.1)' : undefined,
-          color: isB2B ? 'rgba(236,232,225,0.7)' : undefined,
-          borderColor: isB2B ? 'rgba(255,255,255,0.15)' : undefined,
-        }}>
-          [ {p.bg} ]
-        </span>
-      </div>
-
-      <div>
-        <h3 className="serif" style={{ fontSize: 28, letterSpacing: '-0.01em', margin: '0 0 4px' }}>
-          {p.title}
-        </h3>
-        <div style={{
-          fontSize: 12.5, color: isB2B ? 'rgba(236,232,225,0.7)' : 'var(--ink-2)',
-          fontFamily: 'Geist Mono, monospace', letterSpacing: '0.01em',
-        }}>
-          {p.sub}
         </div>
-      </div>
 
-      <p style={{
-        fontSize: 13.5, lineHeight: 1.5, margin: 0,
-        color: isB2B ? 'rgba(236,232,225,0.75)' : 'var(--ink-2)',
-      }}>
-        {p.detail}
-      </p>
+        <p style={{
+          fontSize: 13.5, lineHeight: 1.5, margin: 0,
+          color: isB2B ? 'rgba(236,232,225,0.75)' : 'var(--ink-2)',
+        }}>
+          {p.detail}
+        </p>
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 6 }}>
-        <a href={isB2B ? '#b2b' : '#calculator'}
-           style={{
-             color: isB2B ? '#ece8e1' : 'var(--ink)',
-             textDecoration: 'none', fontSize: 13, fontWeight: 500,
-             display: 'inline-flex', alignItems: 'center', gap: 8,
-           }}>
-          {isB2B ? 'Заявка за оферта' : 'Изчисли'}
-          <Arrow />
-        </a>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 6 }}>
+          {!isB2B && p.base > 0 && (
+            <span className="mono" style={{ fontSize: 10.5, color: 'var(--ink-3)' }}>от {p.base} лв.</span>
+          )}
+          {(!isB2B && p.base === 0) && (
+            <span className="mono" style={{ fontSize: 10.5, color: 'var(--ink-3)' }}>по договор</span>
+          )}
+          <a href={isB2B ? '#b2b' : '#calculator'}
+             style={{
+               color: isB2B ? '#ece8e1' : 'var(--ink)',
+               textDecoration: 'none', fontSize: 13, fontWeight: 500,
+               display: 'inline-flex', alignItems: 'center', gap: 8,
+               marginLeft: 'auto',
+             }}>
+            {isB2B ? 'Заявка за оферта' : 'Изчисли'}
+            <Arrow />
+          </a>
+        </div>
       </div>
     </div>
   )
@@ -281,7 +314,7 @@ function Products() {
   return (
     <section id="products" style={{ padding: '80px 24px' }}>
       <div style={{ maxWidth: 1240, margin: '0 auto' }}>
-        <SectionHead title="Шест направления, едно ателие" sub="Всяка поръчка минава през собствено производство — рязане, кантиране, закаляване, сглобяване." />
+        <SectionHead title="Девет направления, едно ателие" sub="Всяка поръчка минава през собствено производство — рязане, кантиране, закаляване, сглобяване." />
         <div className="v2-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginTop: 44 }}>
           {PRODUCTS.map((p, i) => <ProductCard key={p.id} p={p} i={i} />)}
         </div>
@@ -291,12 +324,9 @@ function Products() {
 }
 
 // ─── Calculator ─────────────────────────────────────────────
-function Label({ num, text }: { num: string; text: string }) {
+function Label({ text }: { text: string }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
-      <span className="mono" style={{ fontSize: 10.5, letterSpacing: '0.14em', color: 'var(--ink-3)' }}>{num}</span>
-      <span style={{ fontSize: 13, fontWeight: 500, letterSpacing: '-0.005em' }}>{text}</span>
-    </div>
+    <span style={{ fontSize: 13, fontWeight: 500, letterSpacing: '-0.005em' }}>{text}</span>
   )
 }
 
@@ -385,6 +415,7 @@ function ServiceChip({ on, onClick, title, sub }: { on: boolean; onClick: () => 
         textAlign: 'left',
         display: 'flex', flexDirection: 'column', gap: 4,
         position: 'relative',
+        transition: 'all .15s ease',
       }}>
       <span style={{
         position: 'absolute', top: 10, right: 10,
@@ -392,6 +423,7 @@ function ServiceChip({ on, onClick, title, sub }: { on: boolean; onClick: () => 
         border: '0.5px solid ' + (on ? 'var(--accent)' : 'var(--line)'),
         background: on ? 'var(--accent)' : 'transparent',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
+        transition: 'all .15s ease',
       }}>
         {on && (
           <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
@@ -505,6 +537,7 @@ function Summary({
           justifyContent: 'center', padding: '12px 16px', marginTop: 4,
           border: 'none',
           opacity: sendState === 'loading' ? 0.6 : 1,
+          transition: 'opacity .15s ease',
         }}
       >
         {sendState === 'loading' && 'Изпращане...'}
@@ -530,6 +563,7 @@ function Calculator() {
   const [services, setServices] = useState({ kant: true, delivery: false, montage: false })
   const [sendState, setSendState] = useState<'idle' | 'loading' | 'ok' | 'err'>('idle')
 
+  const calcProducts = PRODUCTS.filter(p => p.id !== 'b2b' && p.id !== 'obekt')
   const product = PRODUCTS.find(p => p.id === productId) || PRODUCTS[0]
   const glass = GLASS_TYPE.find(g => g.id === glassType) || GLASS_TYPE[0]
 
@@ -585,9 +619,9 @@ function Calculator() {
         }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
             <div>
-              <Label num="A" text="Тип продукт" />
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginTop: 10 }}>
-                {PRODUCTS.filter(p => p.id !== 'b2b').map(p => (
+              <Label text="Тип продукт" />
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginTop: 10 }}>
+                {calcProducts.map(p => (
                   <button key={p.id}
                     onClick={() => setProductId(p.id)}
                     style={{
@@ -609,7 +643,7 @@ function Calculator() {
             </div>
 
             <div>
-              <Label num="B" text="Размери (мм)" />
+              <Label text="Размери (мм)" />
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 0.7fr', gap: 10, marginTop: 10 }}>
                 <Field label="Ширина" value={w} onChange={setW} suffix="мм" />
                 <Field label="Височина" value={h} onChange={setH} suffix="мм" />
@@ -619,7 +653,7 @@ function Calculator() {
             </div>
 
             <div>
-              <Label num="C" text="Дебелина" />
+              <Label text="Дебелина" />
               <div className="seg" style={{ marginTop: 10, width: '100%', display: 'grid', gridTemplateColumns: 'repeat(6,1fr)' }}>
                 {THICKNESS.map(t => (
                   <button key={t} className={thickness === t ? 'on' : ''} onClick={() => setThickness(t)}>
@@ -630,7 +664,7 @@ function Calculator() {
             </div>
 
             <div>
-              <Label num="D" text="Вид стъкло" />
+              <Label text="Вид стъкло" />
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 8, marginTop: 10 }}>
                 {GLASS_TYPE.map(g => (
                   <button key={g.id}
@@ -642,6 +676,7 @@ function Calculator() {
                       fontSize: 12.5, fontWeight: 500,
                       color: 'var(--ink)',
                       display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 6,
+                      transition: 'all .12s ease',
                     }}>
                     <GlassSwatch type={g.id} />
                     <span>{g.label}</span>
@@ -651,7 +686,7 @@ function Calculator() {
             </div>
 
             <div>
-              <Label num="E" text="Услуги" />
+              <Label text="Услуги" />
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8, marginTop: 10 }}>
                 <ServiceChip on={services.kant}     onClick={() => setServices(s => ({ ...s, kant: !s.kant }))}         title="Кантиране" sub="полиран ръб · 14 лв/м" />
                 <ServiceChip on={services.delivery} onClick={() => setServices(s => ({ ...s, delivery: !s.delivery }))} title="Доставка"  sub="до адрес · от 35 лв" />
@@ -671,22 +706,26 @@ function Calculator() {
 // ─── Services ───────────────────────────────────────────────
 function Services() {
   const items = [
-    { n: '01', t: 'Кантиране', d: 'Полиран и скосен ръб. CNC обработка до C-фасет 30°. Готовност за директен монтаж без рамки.' },
-    { n: '02', t: 'Доставка',  d: 'Собствен транспорт за Пловдив и областта. За страната — куриерска услуга със специализирано опаковане.' },
-    { n: '03', t: 'Монтаж',    d: 'Сертифициран екип на място. Силиконово залепване, профили, повдигачи за големи листове.' },
+    { t: 'Кантиране', d: 'Полиран и скосен ръб. CNC обработка до C-фасет 30°. Готовност за директен монтаж без рамки.' },
+    { t: 'Доставка',  d: 'Собствен транспорт за Пловдив и областта. За страната — куриерска услуга със специализирано опаковане.' },
+    { t: 'Монтаж',    d: 'Сертифициран екип на място. Силиконово залепване, профили, повдигачи за големи листове.' },
   ]
   return (
     <section id="services" style={{ padding: '60px 24px' }}>
       <div style={{ maxWidth: 1240, margin: '0 auto' }}>
         <SectionHead title="Един екип — от рязане до монтаж" />
         <div className="v2-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 14, marginTop: 36 }}>
-          {items.map(it => (
-            <div key={it.n} className="glass" style={{ padding: 22, display: 'flex', flexDirection: 'column', gap: 16, minHeight: 220 }}>
-              <div className="mono" style={{ fontSize: 10.5, letterSpacing: '0.14em', color: 'var(--ink-3)' }}>{it.n}</div>
-              <div className="serif" style={{ fontSize: 30, letterSpacing: '-0.01em' }}>{it.t}</div>
-              <p className="dim" style={{ fontSize: 13.5, lineHeight: 1.55, margin: 0 }}>{it.d}</p>
-            </div>
-          ))}
+          {items.map((it, i) => {
+            const { ref, style } = useReveal(i * 0.08) // eslint-disable-line react-hooks/rules-of-hooks
+            return (
+              <div key={it.t} ref={ref} style={style}>
+                <div className="glass" style={{ padding: 22, display: 'flex', flexDirection: 'column', gap: 16, minHeight: 220 }}>
+                  <div className="serif" style={{ fontSize: 30, letterSpacing: '-0.01em' }}>{it.t}</div>
+                  <p className="dim" style={{ fontSize: 13.5, lineHeight: 1.55, margin: 0 }}>{it.d}</p>
+                </div>
+              </div>
+            )
+          })}
         </div>
       </div>
     </section>
@@ -695,9 +734,10 @@ function Services() {
 
 // ─── B2B ────────────────────────────────────────────────────
 function B2B() {
+  const { ref, style } = useReveal(0)
   return (
     <section id="b2b" style={{ padding: '80px 24px' }}>
-      <div style={{ maxWidth: 1240, margin: '0 auto' }}>
+      <div ref={ref} style={{ maxWidth: 1240, margin: '0 auto', ...style }}>
         <div className="glass-matte v2-grid-b2b" style={{
           padding: 44, display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 44,
           background: 'linear-gradient(180deg, rgba(46,74,74,0.94), rgba(20,32,32,0.98))',
@@ -714,9 +754,6 @@ function B2B() {
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
               <a className="btn" style={{ background: '#ece8e1', color: '#1d1c19' }} href="#contact">
                 Заявка за оферта <Arrow />
-              </a>
-              <a className="btn" style={{ background: 'transparent', color: '#ece8e1', border: '0.5px solid rgba(255,255,255,0.3)' }} href="#contact">
-                Изтегли каталог (PDF)
               </a>
             </div>
           </div>
@@ -735,27 +772,6 @@ function B2B() {
               </div>
             ))}
           </div>
-        </div>
-
-        <div className="v2-grid-logos" style={{
-          display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 1,
-          marginTop: 28,
-          border: '0.5px solid var(--line)',
-          borderRadius: 12, overflow: 'hidden',
-          background: 'var(--line)',
-        }}>
-          {['Студио Архитекти','Хотел Алея','Интериор+','DRVO','Bauwerk','Северна Линия'].map(n => (
-            <div key={n} style={{
-              background: 'rgba(255,255,255,0.5)',
-              padding: '20px 10px',
-              textAlign: 'center',
-              fontSize: 12, letterSpacing: '0.04em',
-              color: 'var(--ink-3)',
-              fontFamily: 'Geist Mono, monospace',
-            }}>
-              {n}
-            </div>
-          ))}
         </div>
       </div>
     </section>
@@ -794,22 +810,25 @@ function Footer() {
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
               <span className="wordmark" style={{ fontSize: 32, letterSpacing: '-0.005em', lineHeight: 1 }}>
-                O&amp;N&nbsp;<em style={{ fontStyle: 'italic' }}>glass</em>
+                O&amp;N<LogoSep size={32} /><em style={{ fontStyle: 'italic' }}>glass</em>
               </span>
             </div>
-            <p className="dim" style={{ fontSize: 13.5, lineHeight: 1.55, maxWidth: 360, margin: 0 }}>
-              Семейно ателие за индивидуално стъкло от 2008. Собствено производство в кв. Изгрев, Пловдив.
+            <p className="dim" style={{ fontSize: 13.5, lineHeight: 1.55, maxWidth: 360, margin: '0 0 12px' }}>
+              Семейно ателие за индивидуално стъкло от 2007. Собствено производство в кв. Изгрев, Пловдив.
             </p>
+            <div className="mono" style={{ fontSize: 10, letterSpacing: '0.12em', color: 'var(--ink-3)', textTransform: 'uppercase' }}>
+              Основана · 2007 · Пловдив
+            </div>
           </div>
 
           <FooterCol title="Контакт" rows={[
-            ['+359 32 800 2008', 'tel'],
+            ['+359 32 800 2007', 'tel'],
             ['работилница@onglass.bg', 'mail'],
             ['Изгрев 14, Пловдив', 'addr'],
           ]} />
 
           <FooterCol title="Работно време" rows={[
-            ['Пон – Пет', '08:00 – 18:00'],
+            ['Пон – Пет', '08:00 – 17:00'],
             ['Събота',    '09:00 – 14:00'],
             ['Неделя',    'затворено'],
           ]} pair />
@@ -823,8 +842,7 @@ function Footer() {
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', paddingTop: 24, fontSize: 11.5, color: 'var(--ink-3)', fontFamily: 'Geist Mono, monospace', letterSpacing: '0.04em', flexWrap: 'wrap', gap: 10 }}>
-          <span>© 2008 – {new Date().getFullYear()} O&amp;N GLASS ООД · БУЛСТАТ 200821000</span>
-          <span>МАДЕ С ПРЕЦИЗНОСТ · ПЛОВДИВ</span>
+          <span>© 2007 – {new Date().getFullYear()} O&amp;N GLASS ООД</span>
         </div>
       </div>
     </footer>

@@ -1,3 +1,4 @@
+import Nav from '@/components/Nav'
 import Hero from '@/components/Hero'
 import Services from '@/components/Services'
 import Calculator from '@/components/Calculator'
@@ -7,7 +8,8 @@ import Footer from '@/components/Footer'
 
 export default function Home() {
   return (
-    <>
+    <div className="v1-page">
+      <Nav />
       <Hero />
       <Services />
 
@@ -32,6 +34,6 @@ export default function Home() {
       <About />
       <Contact />
       <Footer />
-    </>
+    </div>
   )
 }

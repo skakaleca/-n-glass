@@ -3,53 +3,47 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 
+function Arrow() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
+      <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false)
-  const [mobileOpen, setMobileOpen] = useState(false)
 
   useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > 30)
+    const handler = () => setScrolled(window.scrollY > 12)
     window.addEventListener('scroll', handler, { passive: true })
     return () => window.removeEventListener('scroll', handler)
   }, [])
 
   return (
     <nav className={`v1-nav${scrolled ? ' scrolled' : ''}`}>
-      <Link href="/" className="logo">
-        <span className="logo-mark">
-          O<em>&</em>N
-        </span>
-        <span className="logo-divider" />
-        <span>Glass</span>
+      <Link href="/" className="v1-nav-wordmark">
+        <div className="v1-nav-brand">O&amp;N&nbsp;<em>glass</em></div>
+        <div className="v1-nav-sub">EST.&nbsp;2008 · ПЛОВДИВ</div>
       </Link>
 
-      <ul className={`nav-links${mobileOpen ? ' open' : ''}`}>
-        <li><a href="#services" onClick={() => setMobileOpen(false)}>Услуги</a></li>
-        <li><a href="#calculator" onClick={() => setMobileOpen(false)}>Калкулатор</a></li>
-        <li><a href="#about" onClick={() => setMobileOpen(false)}>За нас</a></li>
-        <li><a href="#contact" onClick={() => setMobileOpen(false)}>Контакт</a></li>
-        <li><Link href="/v2" className="nav-v2-badge" onClick={() => setMobileOpen(false)}>v2 ✨</Link></li>
-      </ul>
+      <div className="v1-nav-links">
+        <a className="v1-nav-link" href="#services">Услуги</a>
+        <a className="v1-nav-link" href="#calculator">Калкулатор</a>
+        <a className="v1-nav-link" href="#about">За нас</a>
+        <a className="v1-nav-link" href="#contact">Контакт</a>
+      </div>
 
-      <a href="#contact" className="nav-cta" style={{ display: mobileOpen ? 'none' : undefined }}>
-        Заявка
+      <div style={{ flex: 1 }} />
+
+      <div className="v1-chip">
+        <span className="v1-dot" />
+        отворено · до&nbsp;18:00
+      </div>
+
+      <a className="v1-nav-cta" href="#calculator">
+        Изчисли цена <Arrow />
       </a>
-
-      <button
-        className="nav-mobile-btn"
-        aria-label="Меню"
-        onClick={() => setMobileOpen(v => !v)}
-      >
-        {mobileOpen ? (
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" />
-          </svg>
-        ) : (
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path d="M4 6h16M4 12h16M4 18h16" strokeLinecap="round" />
-          </svg>
-        )}
-      </button>
     </nav>
   )
 }
