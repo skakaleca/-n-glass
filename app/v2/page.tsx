@@ -2,8 +2,6 @@
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import Image from 'next/image'
-import { createClient } from '@/lib/supabase/client'
-import type { GlassType, ThicknessOption } from '@/lib/types'
 
 // ─── Reveal hook ────────────────────────────────────────────
 function useReveal(delay = 0) {
@@ -29,7 +27,7 @@ function useReveal(delay = 0) {
   }
 }
 
-// ─── Data (product cards / marketing section) ───────────────
+// ─── Data ───────────────────────────────────────────────────
 type Product = {
   id: string
   bg: string
@@ -52,12 +50,16 @@ const PRODUCTS: Product[] = [
   { id: 'b2b',     bg: 'B2B',         title: 'B2B по проект',   sub: 'Архитекти • интериор • хотели',       detail: 'Партиди по размер. Сертификати, документация, монтажни екипи.',           base: 0 },
 ]
 
+const THICKNESS = [4, 5, 6, 8, 10, 12]
+
 const GLASS_TYPE = [
   { id: 'clear',    label: 'Прозрачно',      mult: 1.00 },
   { id: 'matte',    label: 'Матирано',       mult: 1.18 },
   { id: 'bronze',   label: 'Антиваровиково', mult: 1.25 },
   { id: 'graphite', label: 'Цветно',         mult: 1.32 },
 ]
+
+const PRICE_PER_M2: Record<number, number> = { 4: 38, 5: 46, 6: 54, 8: 72, 10: 96, 12: 128 }
 
 // ─── Wordmark separator ─────────────────────────────────────
 function LogoSep({ size = 19 }: { size?: number }) {
@@ -448,11 +450,11 @@ type CalcResult = {
 }
 
 function Summary({
-  glassTypeName, glass, thicknessLabel, w, h, qty, services, calc, fmt, onSend, sendState,
+  product, glass, thickness, w, h, qty, services, calc, fmt, onSend, sendState,
 }: {
-  glassTypeName: string
+  product: Product
   glass: typeof GLASS_TYPE[number]
-  thicknessLabel: string
+  thickness: number
   w: number; h: number; qty: number
   services: { kant: boolean; delivery: boolean; montage: boolean }
   calc: CalcResult
@@ -461,7 +463,7 @@ function Summary({
   sendState: 'idle' | 'loading' | 'ok' | 'err'
 }) {
   const rows = [
-    { k: `${glassTypeName} · ${glass.label.toLowerCase()} · ${thicknessLabel}`, v: `${fmt(calc.glassCost)} лв.` },
+    { k: `Стъкло ${glass.label.toLowerCase()} · ${thickness} мм`, v: `${fmt(calc.glassCost)} лв.` },
     services.kant     && { k: `Кантиране (${calc.perimM.toFixed(2)} м)`, v: `${fmt(calc.kantCost)} лв.` },
     services.delivery && { k: 'Доставка',                                v: `${fmt(calc.deliveryCost)} лв.` },
     services.montage  && { k: 'Монтаж на място',                         v: `${fmt(calc.montageCost)} лв.` },
@@ -486,7 +488,7 @@ function Summary({
 
       <div>
         <div className="serif" style={{ fontSize: 28, lineHeight: 1.1, letterSpacing: '-0.01em' }}>
-          {glassTypeName}
+          {product.title}
         </div>
         <div className="mono" style={{ fontSize: 11, color: 'rgba(236,232,225,0.6)', marginTop: 4 }}>
           {w} × {h} мм · {qty} бр. · {calc.m2.toFixed(2)} м²
@@ -548,59 +550,24 @@ function Summary({
   )
 }
 
-function SkeletonBtn({ cols }: { cols?: number }) {
-  return (
-    <div style={{
-      height: 60, borderRadius: 10,
-      background: 'linear-gradient(90deg, rgba(0,0,0,0.04) 25%, rgba(0,0,0,0.07) 50%, rgba(0,0,0,0.04) 75%)',
-      backgroundSize: '200% 100%',
-      animation: 'v2FadeInUp 0.4s ease backwards',
-      gridColumn: cols ? `span ${cols}` : undefined,
-    }} />
-  )
-}
-
 function Calculator() {
-  const [glassVisualId, setGlassVisualId] = useState('clear')
+  const [productId, setProductId] = useState('table')
+  const [glassType, setGlassType] = useState('clear')
+  const [thickness, setThickness] = useState(8)
   const [w, setW] = useState(1200)
   const [h, setH] = useState(700)
   const [qty, setQty] = useState(1)
   const [services, setServices] = useState({ kant: true, delivery: false, montage: false })
   const [sendState, setSendState] = useState<'idle' | 'loading' | 'ok' | 'err'>('idle')
 
-  const [dbGlassTypes, setDbGlassTypes] = useState<GlassType[]>([])
-  const [dbThickOpts, setDbThickOpts] = useState<ThicknessOption[]>([])
-  const [dbLoading, setDbLoading] = useState(true)
-  const [selectedGlassId, setSelectedGlassId] = useState<number | null>(null)
-  const [selectedThickId, setSelectedThickId] = useState<number | null>(null)
-
-  useEffect(() => {
-    const supabase = createClient()
-    Promise.all([
-      supabase.from('glass_types').select('*').order('sort_order'),
-      supabase.from('thickness_options').select('*').order('sort_order'),
-    ]).then(([gt, th]) => {
-      const glasses = (gt.data ?? []) as GlassType[]
-      const thicks = (th.data ?? []) as ThicknessOption[]
-      setDbGlassTypes(glasses)
-      setDbThickOpts(thicks)
-      if (glasses.length) setSelectedGlassId(glasses[0].id)
-      if (thicks.length) {
-        const def = thicks.find(t => t.mm === 8) ?? thicks[0]
-        setSelectedThickId(def.id)
-      }
-      setDbLoading(false)
-    })
-  }, [])
-
-  const selectedGlass = dbGlassTypes.find(g => g.id === selectedGlassId)
-  const selectedThick = dbThickOpts.find(t => t.id === selectedThickId)
-  const glassVisual = GLASS_TYPE.find(g => g.id === glassVisualId) || GLASS_TYPE[0]
+  const calcProducts = PRODUCTS.filter(p => p.id !== 'b2b' && p.id !== 'obekt')
+  const product = PRODUCTS.find(p => p.id === productId) || PRODUCTS[0]
+  const glass = GLASS_TYPE.find(g => g.id === glassType) || GLASS_TYPE[0]
 
   const calc = useMemo<CalcResult>(() => {
     const m2 = Math.max(0.04, (w / 1000) * (h / 1000))
-    const pricePerM2 = (selectedGlass?.base_price_per_m2 ?? 85) + (selectedThick?.surcharge_per_m2 ?? 0)
-    const glassCost = m2 * pricePerM2 * glassVisual.mult
+    const pricePerM2 = PRICE_PER_M2[thickness]
+    const glassCost = m2 * pricePerM2 * glass.mult
     const perimM = 2 * ((w / 1000) + (h / 1000))
     const kantCost = services.kant ? perimM * 14 : 0
     const deliveryCost = services.delivery ? 35 + Math.max(0, m2 - 1) * 8 : 0
@@ -609,7 +576,7 @@ function Calculator() {
     const vat = subtotal * 0.20
     const total = subtotal + vat
     return { m2, perimM, glassCost, kantCost, deliveryCost, montageCost, subtotal, vat, total, pricePerM2 }
-  }, [w, h, selectedGlass, selectedThick, qty, services, glassVisual])
+  }, [w, h, thickness, qty, services, glass])
 
   const fmt = (n: number) => Math.round(n).toLocaleString('bg-BG')
 
@@ -620,12 +587,10 @@ function Calculator() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          glass_type: selectedGlass
-            ? `${selectedGlass.name} · ${glassVisual.label}`
-            : glassVisual.label,
+          glass_type: `${product.title} · ${glass.label}`,
           width_cm: w / 10,
           height_cm: h / 10,
-          thickness_mm: selectedThick?.mm ?? 8,
+          thickness_mm: thickness,
           extras: services,
           estimated_price: Math.round(calc.total),
         }),
@@ -636,8 +601,6 @@ function Calculator() {
     }
     setTimeout(() => setSendState('idle'), 4000)
   }
-
-  const colsForThick = dbThickOpts.length || 4
 
   return (
     <section id="calculator" style={{ padding: '80px 24px' }}>
@@ -652,33 +615,27 @@ function Calculator() {
           gap: 28,
         }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
-
             <div>
               <Label text="Тип продукт" />
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginTop: 10 }}>
-                {dbLoading
-                  ? [0, 1, 2, 3, 4].map(i => <SkeletonBtn key={i} />)
-                  : dbGlassTypes.map(g => (
-                    <button key={g.id}
-                      onClick={() => setSelectedGlassId(g.id)}
-                      style={{
-                        padding: '12px 10px',
-                        borderRadius: 10,
-                        border: '0.5px solid ' + (selectedGlassId === g.id ? 'var(--ink)' : 'var(--line)'),
-                        background: selectedGlassId === g.id ? 'var(--ink)' : 'rgba(255,255,255,0.55)',
-                        color: selectedGlassId === g.id ? '#ece8e1' : 'var(--ink)',
-                        fontSize: 13, fontWeight: 500,
-                        textAlign: 'left',
-                        transition: 'all .12s ease',
-                        display: 'flex', flexDirection: 'column', gap: 2,
-                      }}>
-                      <span>{g.name}</span>
-                      <span style={{ fontSize: 10.5, opacity: 0.6, fontFamily: 'Geist Mono, monospace' }}>
-                        от {g.base_price_per_m2} лв./м²
-                      </span>
-                    </button>
-                  ))
-                }
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginTop: 10 }}>
+                {calcProducts.map(p => (
+                  <button key={p.id}
+                    onClick={() => setProductId(p.id)}
+                    style={{
+                      padding: '12px 10px',
+                      borderRadius: 10,
+                      border: '0.5px solid ' + (productId === p.id ? 'var(--ink)' : 'var(--line)'),
+                      background: productId === p.id ? 'var(--ink)' : 'rgba(255,255,255,0.55)',
+                      color: productId === p.id ? '#ece8e1' : 'var(--ink)',
+                      fontSize: 13, fontWeight: 500,
+                      textAlign: 'left',
+                      transition: 'all .12s ease',
+                      display: 'flex', flexDirection: 'column', gap: 2,
+                    }}>
+                    <span>{p.title}</span>
+                    <span style={{ fontSize: 10.5, opacity: 0.6, fontFamily: 'Geist Mono, monospace' }}>от {p.base} лв.</span>
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -694,15 +651,12 @@ function Calculator() {
 
             <div>
               <Label text="Дебелина" />
-              <div className="seg" style={{ marginTop: 10, width: '100%', display: 'grid', gridTemplateColumns: `repeat(${colsForThick}, 1fr)` }}>
-                {dbLoading
-                  ? [0, 1, 2, 3].map(i => <button key={i} style={{ opacity: 0.25 }}>—</button>)
-                  : dbThickOpts.map(t => (
-                    <button key={t.id} className={selectedThickId === t.id ? 'on' : ''} onClick={() => setSelectedThickId(t.id)}>
-                      {t.label}
-                    </button>
-                  ))
-                }
+              <div className="seg" style={{ marginTop: 10, width: '100%', display: 'grid', gridTemplateColumns: 'repeat(6,1fr)' }}>
+                {THICKNESS.map(t => (
+                  <button key={t} className={thickness === t ? 'on' : ''} onClick={() => setThickness(t)}>
+                    {t} мм
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -711,11 +665,11 @@ function Calculator() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 8, marginTop: 10 }}>
                 {GLASS_TYPE.map(g => (
                   <button key={g.id}
-                    onClick={() => setGlassVisualId(g.id)}
+                    onClick={() => setGlassType(g.id)}
                     style={{
                       padding: '10px 12px', borderRadius: 10,
-                      border: '0.5px solid ' + (glassVisualId === g.id ? 'var(--ink)' : 'var(--line)'),
-                      background: glassVisualId === g.id ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.45)',
+                      border: '0.5px solid ' + (glassType === g.id ? 'var(--ink)' : 'var(--line)'),
+                      background: glassType === g.id ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.45)',
                       fontSize: 12.5, fontWeight: 500,
                       color: 'var(--ink)',
                       display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 6,
@@ -738,14 +692,8 @@ function Calculator() {
             </div>
           </div>
 
-          <Summary
-            glassTypeName={selectedGlass?.name ?? (dbLoading ? '...' : 'Стъкло')}
-            glass={glassVisual}
-            thicknessLabel={selectedThick?.label ?? (dbLoading ? '...' : '—')}
-            w={w} h={h} qty={qty}
-            services={services} calc={calc} fmt={fmt}
-            onSend={handleSend} sendState={sendState}
-          />
+          <Summary product={product} glass={glass} thickness={thickness} w={w} h={h} qty={qty}
+                   services={services} calc={calc} fmt={fmt} onSend={handleSend} sendState={sendState} />
         </div>
       </div>
     </section>
