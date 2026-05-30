@@ -809,7 +809,7 @@ function FooterCol({ title, rows, pair, link }: { title: string; rows: FooterRow
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 13 }}>
         {rows.map((r, i) => {
-          if (link) return <a key={i} href={r[1]} style={{ color: 'var(--ink)', textDecoration: 'none' }} className="nav-link">{r[0]}</a>
+          if (link) return <a key={i} href={r[1]} style={{ color: 'inherit', textDecoration: 'none' }} className="nav-link">{r[0]}</a>
           if (pair) return (
             <div key={i} style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span className="dim">{r[0]}</span>
